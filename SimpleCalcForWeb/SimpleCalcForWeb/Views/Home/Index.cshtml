@@ -1,0 +1,22 @@
+﻿@{ 
+    ViewData["Title"] = "Home";
+}
+
+<h1>Расчет арифметических выражений онлайн</h1>
+
+<form>
+    <p>Введите арифметическое выражение (скобки, числа, операции должны быть разделены пробелом).</p>
+    <meta charset="utf-8" />
+    <input type="text" name="src"/>
+    <input type="submit" value="Расчет"/>
+</form>
+
+<h2>@ViewData["Result"]</h2>
+
+<h3>История</h3>
+<h5>
+    @foreach (var historyNote in ViewBag.Array)
+    {
+        <p>@historyNote</p>
+    }
+</h5>
