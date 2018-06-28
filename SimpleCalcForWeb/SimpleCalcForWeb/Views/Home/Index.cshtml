@@ -1,22 +1,29 @@
-﻿@{ 
+﻿@{
     ViewData["Title"] = "Home";
 }
 
+<meta charset="utf-8" />
+
 <h1>Расчет арифметических выражений онлайн</h1>
 
-<form>
+@model SimpleCalcForWeb.Models.Note
+
+<form asp-action="Index" metod="post">
     <p>Введите арифметическое выражение (скобки, числа, операции должны быть разделены пробелом).</p>
-    <meta charset="utf-8" />
-    <input type="text" name="src"/>
+    <input asp-for="Expression"/>
     <input type="submit" value="Расчет"/>
 </form>
 
 <h2>@ViewData["Result"]</h2>
 
 <h3>История</h3>
-<h5>
-    @foreach (var historyNote in ViewBag.Array)
+<table>
+    <tr><th width="500px">Выражение</th><th width="500px">Результат</th></tr>
+    @foreach (var Note in ViewBag.History)
     {
-        <p>@historyNote</p>
+        <tr>
+            <td>@Note.Expression</td>
+            <td>@Note.Result</td>
+        </tr>
     }
-</h5>
+</table>

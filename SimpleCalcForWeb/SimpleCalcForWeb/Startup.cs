@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.IO;
+using Microsoft.EntityFrameworkCore;
+using SimpleCalcForWeb.Models;
 
-namespace SimpleCalcForWeb
+namespace SimpleCalcForWeb.Controllers
 {
     public class Startup
     {
@@ -24,14 +18,16 @@ namespace SimpleCalcForWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<Repository>(options =>
+               options.UseSqlServer(connection));
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseStaticFiles();
-
 
             //if (env.IsDevelopment())
             //{
@@ -42,8 +38,6 @@ namespace SimpleCalcForWeb
             //{
             //    app.UseExceptionHandler("/Home/Error");
             //}
-
-
 
             app.UseMvc(routes =>
             {

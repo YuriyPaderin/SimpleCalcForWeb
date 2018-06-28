@@ -8,4 +8,5 @@ C:\Users\y.paderin\source\repos\SimpleCalcForWeb\SimpleCalcForWeb\obj\Debug\netc
 C:\Users\y.paderin\source\repos\SimpleCalcForWeb\SimpleCalcForWeb\obj\Debug\netcoreapp2.0\SimpleCalcForWeb.AssemblyInfo.cs
 C:\Users\y.paderin\source\repos\SimpleCalcForWeb\SimpleCalcForWeb\obj\Debug\netcoreapp2.0\SimpleCalcForWeb.dll
 C:\Users\y.paderin\source\repos\SimpleCalcForWeb\SimpleCalcForWeb\obj\Debug\netcoreapp2.0\SimpleCalcForWeb.pdb
+C:\Users\y.paderin\source\repos\SimpleCalcForWeb\SimpleCalcForWeb\obj\Debug\netcoreapp2.0\UserSecretsAssemblyInfo.cs
 C:\Users\y.paderin\source\repos\SimpleCalcForWeb\SimpleCalcForWeb\obj\Debug\netcoreapp2.0\SimpleCalcForWeb.csprojAssemblyReference.cache

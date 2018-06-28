@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,66 +9,54 @@ namespace SimpleCalcForWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private bool HistoryIsRead { get; set; }
+        private static Repository _db;
 
-        [HttpGet]
-        public IActionResult Index(string src = null)
+        public HomeController(Repository context)
         {
-            var historyNotes = History.GetHistory();
+            _db = context;
+        }
 
-            if (src != null && src.Length > 0)
+        public IActionResult Index()
+        {
+            ViewBag.History = _db.Notes.ToList();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Index(Note note)
+        {
+            if (note.Expression != null && note.Expression.Length > 0)
             {
                 int codeError;
                 Calculator calc = new Calculator();
-                var result = calc.Evaluate(src, out codeError).ToString();
+                note.Result = calc.Evaluate(note.Expression, out codeError).ToString();
 
                 switch (codeError)
                 {
-                    case 0:
-                        result = $"Результат вычислений равен: {result}";
+                    case 0: 
                         break;
                     case 1:
-                        result = "Вы ввели неизвестную операцию.";
+                        note.Result = "Вы ввели неизвестную операцию.";
                         break;
                     case 2:
-                        result = "Неверный формат строки.";
+                        note.Result = "Неверный формат строки.";
                         break;
                     case 3:
-                        result = "Неверное соотношение цифр и арифметических операций.";
+                        note.Result = "Неверное соотношение цифр и арифметических операций.";
                         break;
                     default:
-                        result = $"Неизвестная ошибка: {src}";
+                        note.Result = $"Неизвестная ошибка: {note.Expression}";
                         break;
                 }
 
-                ViewData["Result"] = result;
+                ViewData["Result"] = "Ответ равен: " + note.Result;
 
-                History.PutRecord(result);
-                historyNotes.Insert(0, result);
+                _db.Notes.Add(note);
+                _db.SaveChanges();
             }
 
-            ViewBag.Array = historyNotes;
-
+            ViewBag.History = _db.Notes.ToList();
             return View();
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Page about SimpleCalc.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "My contact page.";
-
-            return View();
-        }
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
