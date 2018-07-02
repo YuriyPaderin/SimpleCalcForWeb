@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using SimpleCalcForWeb.Models;
-using System.Collections.Generic;
 
 namespace SimpleCalcForWeb.Controllers
 {
