@@ -23,22 +23,32 @@
     <input type="submit" value="Отфильтровать"/>
 </form>
 <table>
-    <tr><th width="500px">Выражение</th><th width="500px">Результат</th><th width="500px">Имя хоста</th></tr>
+    <tr><th width="500px">Выражение</th><th width="800px">Результат</th><th width="800px">Имя хоста</th></tr>
     @for(int i = ViewBag.History.Count - 1; i >= 0; i--)
     {
         <tr>
             <td>@ViewBag.History[i].Expression</td>
             <td>
-                @switch(ViewBag.History[i].CodeError)
+                @switch (ViewBag.History[i].CodeError)
                 {
                     case 0:
-                        @ViewBag.History[i].Result
+                        ViewData["Answer"] = ViewBag.History[i].Result.ToString();
+                        break;
+                    case 1:
+                        ViewData["Answer"] = "Вы ввели неизвестную операцию.";
+                        break;
+                    case 2:
+                        ViewData["Answer"] = "Неверный формат строки.";
+                        break;
+                    case 3:
+                        ViewData["Answer"] = "Неверное соотношение цифр и арифметических операций.";
                         break;
                     default:
-                        ViewData["Error"] = "Ошибка ввода";
-                        @ViewData["Error"]
+                        ViewData["Answer"] = "Неизвестеная ошибка";
                         break;
                 }
+
+                @ViewData["Answer"]
             </td>
             <td>@ViewBag.History[i].Host</td>
         </tr>
