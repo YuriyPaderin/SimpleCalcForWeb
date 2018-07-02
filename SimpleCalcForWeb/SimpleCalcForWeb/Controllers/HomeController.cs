@@ -1,24 +1,31 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SimpleCalcForWeb.Models;
+using System.Collections.Generic;
 
 namespace SimpleCalcForWeb.Controllers
 {
     public class HomeController : Controller
     {
-        private static Repository _db;
+        private static CalcDbContext _db;
 
-        public HomeController(Repository context)
+        public HomeController(CalcDbContext context)
         {
             _db = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(Filter filter)
         {
-            ViewBag.History = _db.Notes.ToList();
+            IQueryable<Note> notes = _db.Notes;
+
+            if (filter.Expression != null && filter.Expression.Length > 0)
+                notes = notes.Where(c => c.Expression.Contains(filter.Expression));
+
+            if (filter.Host != null && filter.Host.Length > 0)
+                notes = notes.Where(c => c.Host.Contains(filter.Host));
+
+            ViewBag.History = notes.ToList();
             return View();
         }
 
@@ -27,29 +34,19 @@ namespace SimpleCalcForWeb.Controllers
         {
             if (note.Expression != null && note.Expression.Length > 0)
             {
-                int codeError;
+                note.Id = Guid.NewGuid().ToString();
+
+                int codeError = 0;
                 Calculator calc = new Calculator();
-                note.Result = calc.Evaluate(note.Expression, out codeError).ToString();
+                note.Result = calc.Evaluate(note.Expression, out codeError);
+                note.CodeError = codeError;
+                if (note.CodeError > 0)
+                    note.Result = null;
 
-                switch (codeError)
-                {
-                    case 0: 
-                        break;
-                    case 1:
-                        note.Result = "Вы ввели неизвестную операцию.";
-                        break;
-                    case 2:
-                        note.Result = "Неверный формат строки.";
-                        break;
-                    case 3:
-                        note.Result = "Неверное соотношение цифр и арифметических операций.";
-                        break;
-                    default:
-                        note.Result = $"Неизвестная ошибка: {note.Expression}";
-                        break;
-                }
+                note.Date = DateTime.Now;
+                note.Host = Request.Host.ToString();
 
-                ViewData["Result"] = "Ответ равен: " + note.Result;
+                ViewData["Result"] = "Ответ равен: " + note.Result.ToString();
 
                 _db.Notes.Add(note);
                 _db.SaveChanges();

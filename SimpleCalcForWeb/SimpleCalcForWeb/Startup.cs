@@ -19,7 +19,7 @@ namespace SimpleCalcForWeb.Controllers
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<Repository>(options =>
+            services.AddDbContext<CalcDbContext>(options =>
                options.UseSqlServer(connection));
             services.AddMvc();
         }
@@ -29,22 +29,12 @@ namespace SimpleCalcForWeb.Controllers
         {
             app.UseStaticFiles();
 
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseBrowserLink();
-            //    app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
-            //    app.UseExceptionHandler("/Home/Error");
-            //}
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            }); 
         }
     }
 }
