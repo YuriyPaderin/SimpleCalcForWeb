@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using SimpleCalcForWeb.Models;
 
@@ -14,9 +15,16 @@ namespace SimpleCalcForWeb.Controllers
             _db = context;
         }
 
+        [HttpGet]
         public IActionResult Index(Filter filter)
         {
+            // TODO: Определится с использованием selected и input, datalist
             IQueryable<Note> notes = _db.Notes;
+
+            var keys = new List<string>();
+            var groupKey = notes.GroupBy(c => c.Host);
+            foreach (var key in groupKey)
+                keys.Add(key.Key);
 
             if (filter.Expression != null && filter.Expression.Length > 0)
                 notes = notes.Where(c => c.Expression.Contains(filter.Expression));
@@ -24,6 +32,7 @@ namespace SimpleCalcForWeb.Controllers
             if (filter.Host != null && filter.Host.Length > 0)
                 notes = notes.Where(c => c.Host.Contains(filter.Host));
 
+            ViewBag.Keys = keys;
             ViewBag.History = notes.ToList();
             return View();
         }
