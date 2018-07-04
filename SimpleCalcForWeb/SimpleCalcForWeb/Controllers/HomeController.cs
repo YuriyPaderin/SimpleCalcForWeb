@@ -48,6 +48,7 @@ namespace SimpleCalcForWeb.Controllers
                 ViewData["Result"] = "Ответ равен: " + note.Result.ToString();
 
                 _db.Notes.Add(note);
+                _db.Notes.OrderBy(c => c.Date);
                 _db.SaveChanges();
             }
 

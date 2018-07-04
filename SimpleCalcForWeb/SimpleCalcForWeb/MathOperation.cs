@@ -4,12 +4,12 @@ namespace SimpleCalcForWeb
 {
     public interface IMathOperation
     {
-        double Evaluate(double a, double b);
+        double? Evaluate(double? a, double? b);
     }
 
     public class MathOperationSum : IMathOperation
     {
-        public double Evaluate(double a, double b)
+        public double? Evaluate(double? a, double? b)
         {
             return a + b;
         }
@@ -17,7 +17,7 @@ namespace SimpleCalcForWeb
 
     public class MathOperationMinus : IMathOperation
     {
-        public double Evaluate(double a, double b)
+        public double? Evaluate(double? a, double? b)
         {
             return a - b;
         }
@@ -25,7 +25,7 @@ namespace SimpleCalcForWeb
 
     public class MathOperationMultiply : IMathOperation
     {
-        public double Evaluate(double a, double b)
+        public double? Evaluate(double? a, double? b)
         {
             return a * b;
         }
@@ -33,7 +33,7 @@ namespace SimpleCalcForWeb
 
     public class MathOperationDivide : IMathOperation
     {
-        public double Evaluate(double a, double b)
+        public double? Evaluate(double? a, double? b)
         {
             return a / b;
         }
@@ -41,9 +41,12 @@ namespace SimpleCalcForWeb
 
     public class MathOperationPow : IMathOperation
     {
-        public double Evaluate(double a, double b)
+        public double? Evaluate(double? a, double? b)
         {
-            return Math.Pow(a, b);
+            double? pow = 1;
+            for (int i = 0; i <= b; i++)
+                pow *= a;
+            return pow;
         }
     }
 }

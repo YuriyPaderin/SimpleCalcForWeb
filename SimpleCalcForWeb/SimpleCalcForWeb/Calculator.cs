@@ -8,10 +8,10 @@ namespace SimpleCalcForWeb
     {
         private List<ParsingItem> _correctItemCollect = new List<ParsingItem>();
 
-        public double Evaluate(string src, out int codeError)
+        public double? Evaluate(string src, out int codeError)
         {
             codeError = Parse(src);
-            return codeError == 0 ? Calculate() : 0f;
+            return codeError == 0 ? Calculate() : null;
         }
 
         private int Parse(string src)
@@ -25,7 +25,7 @@ namespace SimpleCalcForWeb
                 double tempNumber;
                 if (double.TryParse(word, out tempNumber))
                 {
-                    if (correctItem.IsFilledNumber) return 3;
+                    if (correctItem.Number != null) return 3;
                     correctItem.Number = tempNumber;
                 }
                 else if (word.Length == 1)
@@ -33,31 +33,31 @@ namespace SimpleCalcForWeb
                     switch (word)
                     {
                         case "+":
-                            if (correctItem.Operation != null || correctItem.IsFilledNumber == false)
+                            if (correctItem.Operation != null || correctItem.Number == null)
                                 return 3;
                             correctItem.Operation = new MathOperationSum();
                             correctItem.Range = currentRange;
                             break;
                         case "-":
-                            if (correctItem.Operation != null || correctItem.IsFilledNumber == false)
+                            if (correctItem.Operation != null || correctItem.Number == null)
                                 return 3;
                             correctItem.Operation = new MathOperationMinus();
                             correctItem.Range = currentRange;
                             break;
                         case "*":
-                            if (correctItem.Operation != null || correctItem.IsFilledNumber == false)
+                            if (correctItem.Operation != null || correctItem.Number == null)
                                 return 3;
                             correctItem.Operation = new MathOperationMultiply();
                             correctItem.Range = currentRange + 1;
                             break;
                         case "/":
-                            if (correctItem.Operation != null || correctItem.IsFilledNumber == false)
+                            if (correctItem.Operation != null || correctItem.Number == null)
                                 return 3;
                             correctItem.Operation = new MathOperationDivide();
                             correctItem.Range = currentRange + 1;
                             break;
                         case "^":
-                            if (correctItem.Operation != null || correctItem.IsFilledNumber == false)
+                            if (correctItem.Operation != null || correctItem.Number != null)
                                 return 3;
                             correctItem.Operation = new MathOperationPow();
                             correctItem.Range = currentRange + 2;
@@ -77,19 +77,19 @@ namespace SimpleCalcForWeb
                     return 2;
                 }
 
-                if (correctItem.IsFilled)
+                if (correctItem.Number != null && correctItem.Operation != null)
                 {
                     _correctItemCollect.Add(correctItem);
                     correctItem = new ParsingItem();
                 }
             }
             _correctItemCollect.Add(correctItem);
-            if (correctItem.IsFilled)
+            if (correctItem.Number != null && correctItem.Operation != null)
                 return 3;
             return 0;
         }
 
-        private double Calculate()
+        private double? Calculate()
         {
             while (_correctItemCollect.Count > 1)
             {
