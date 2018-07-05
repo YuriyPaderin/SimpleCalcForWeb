@@ -6,57 +6,49 @@
 
 <h1>Расчет арифметических выражений онлайн</h1>
 
-@model SimpleCalcForWeb.Models.Note
+@model SimpleCalcForWeb.Models.FormData
 
-<form asp-action="Index" metod="post">
+<form asp-action="Index" method="get">
     <p>Введите арифметическое выражение (скобки, числа, операции должны быть разделены пробелом).</p>
-    <input asp-for="Expression" value=""/>
+    <input formmethod="post" asp-for="Expression" value=""/>
     <input type="submit" value="Расчет"/>
-</form>
 
 <h2>@ViewData["Result"]</h2>
 
 <h3>История</h3>
-<form asp-action="Index" method="get">
-    <input asp-for="Expression"/>
-    <input asp-for="Host" list="remember"/>
-    <datalist id="remember">
-        @foreach (var key in ViewBag.Keys)
-        {
-            <option>@key</option>
-        }
-    </datalist>
+    <input asp-for="ExpressionFilter"/>
+    <input asp-for="HostFilter"/>
     <input type="submit" value="Отфильтровать"/>
 </form>
 <table>
     <tr><th width="500px">Выражение</th><th width="800px">Результат</th><th width="800px">Имя хоста</th></tr>
-    @for(int i = ViewBag.History.Count - 1; i >= 0; i--)
+    @foreach(var note in ViewBag.History)
     {
         <tr>
-            <td>@ViewBag.History[i].Expression</td>
+            <td>@note.Expression</td>
             <td>
-                @switch (ViewBag.History[i].CodeError)
+                @switch (note.CodeError)
                 {
                     case 0:
-                        ViewData["Answer"] = ViewBag.History[i].Result.ToString();
+                        ViewData["Note"] = note.Result;
                         break;
                     case 1:
-                        ViewData["Answer"] = "Вы ввели неизвестную операцию.";
+                        ViewData["Note"] = "Вы ввели неизвестную операцию.";
                         break;
                     case 2:
-                        ViewData["Answer"] = "Неверный формат строки.";
+                        ViewData["Note"] = "Неверный формат строки.";
                         break;
                     case 3:
-                        ViewData["Answer"] = "Неверное соотношение цифр и арифметических операций.";
+                        ViewData["Note"] = "Неверное соотношение цифр и арифметических операций.";
                         break;
                     default:
-                        ViewData["Answer"] = "Неизвестеная ошибка";
+                        ViewData["Note"] = "Неизвестеная ошибка.";
                         break;
                 }
 
-                @ViewData["Answer"]
+                @ViewData["Note"]
             </td>
-            <td>@ViewBag.History[i].Host</td>
+            <td>@note.Host</td>
         </tr>
     }
 </table>

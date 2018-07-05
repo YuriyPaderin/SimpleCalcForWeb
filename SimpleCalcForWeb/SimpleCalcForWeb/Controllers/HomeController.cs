@@ -16,52 +16,40 @@ namespace SimpleCalcForWeb.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(Filter filter)
+        public IActionResult Index(FormData data)
         {
-            // TODO: Определится с использованием selected и input, datalist
-            IQueryable<Note> notes = _db.Notes;
-
-            var keys = new List<string>();
-            var groupKey = notes.GroupBy(c => c.Host);
-            foreach (var key in groupKey)
-                keys.Add(key.Key);
-
-            if (filter.Expression != null && filter.Expression.Length > 0)
-                notes = notes.Where(c => c.Expression.Contains(filter.Expression));
-
-            if (filter.Host != null && filter.Host.Length > 0)
-                notes = notes.Where(c => c.Host.Contains(filter.Host));
-
-            ViewBag.Keys = keys;
-            ViewBag.History = notes.ToList();
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Index(Note note)
-        {
-            if (note.Expression != null && note.Expression.Length > 0)
+            if (string.IsNullOrEmpty(data.Expression) == false)
             {
-                note.Id = Guid.NewGuid().ToString();
+                var note = new Note();
+                note.Expression = data.Expression;
+                note.Id = Guid.NewGuid();
 
-                int codeError = 0;
-                Calculator calc = new Calculator();
+                int codeError;
+                var calc = new Calculator();
                 note.Result = calc.Evaluate(note.Expression, out codeError);
                 note.CodeError = codeError;
-                if (note.CodeError > 0)
-                    note.Result = null;
+
+                if (note.Result == null)
+                    ViewData["Result"] = "Неудалось подсчтитать ответ.";
+                else
+                    ViewData["Result"] = "Ответ равен: " + note.Result.ToString();
 
                 note.Date = DateTime.Now;
                 note.Host = Request.Host.ToString();
 
-                ViewData["Result"] = "Ответ равен: " + note.Result.ToString();
-
                 _db.Notes.Add(note);
-                _db.Notes.OrderBy(c => c.Date);
                 _db.SaveChanges();
             }
 
-            ViewBag.History = _db.Notes.ToList();
+            var notes = _db.Notes.OrderByDescending(c => c.Date).AsQueryable();
+
+            if (string.IsNullOrEmpty(data.ExpressionFilter) == false)
+                notes = notes.Where(c => c.Expression.Contains(data.ExpressionFilter));
+
+            if (string.IsNullOrEmpty(data.HostFilter) == false)
+                notes = notes.Where(c => c.Host.Contains(data.HostFilter));
+
+            ViewBag.History = notes.ToList();
             return View();
         }
     }

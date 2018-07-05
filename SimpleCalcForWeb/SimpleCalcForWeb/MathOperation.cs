@@ -35,7 +35,7 @@ namespace SimpleCalcForWeb
     {
         public double? Evaluate(double? a, double? b)
         {
-            return a / b;
+            return b != 0 ? a / b : null;
         }
     }
 

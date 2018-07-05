@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 
 namespace SimpleCalcForWeb.Models
 {
-    public class Filter
+    public class FormData
     {
         public string Expression { get; set; }
-        public string Host { get; set; }
+        public string ExpressionFilter { get; set; }
+        public string HostFilter { get; set; }
     }
 }

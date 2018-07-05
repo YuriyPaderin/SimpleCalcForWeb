@@ -11,7 +11,16 @@ namespace SimpleCalcForWeb
         public double? Evaluate(string src, out int codeError)
         {
             codeError = Parse(src);
-            return codeError == 0 ? Calculate() : null;
+            if (codeError == 0)
+            {
+                var result = Calculate();
+                if (result == null)
+                    codeError = 4;
+
+                return result;
+            }
+
+            return null;
         }
 
         private int Parse(string src)
