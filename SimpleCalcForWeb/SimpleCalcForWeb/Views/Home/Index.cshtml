@@ -10,15 +10,15 @@
 
 <form asp-action="Index" method="get">
     <p>Введите арифметическое выражение (скобки, числа, операции должны быть разделены пробелом).</p>
-    <input formmethod="post" asp-for="Expression" value=""/>
-    <input type="submit" value="Расчет"/>
+    <input asp-for="Expression" value=""/>
+    <input type="submit" asp-for="TypeButton" value="Расчет"/>
 
 <h2>@ViewData["Result"]</h2>
 
 <h3>История</h3>
     <input asp-for="ExpressionFilter"/>
     <input asp-for="HostFilter"/>
-    <input type="submit" value="Отфильтровать"/>
+    <input type="submit" asp-for="TypeButton" value="Отфильтровать"/>
 </form>
 <table>
     <tr><th width="500px">Выражение</th><th width="800px">Результат</th><th width="800px">Имя хоста</th></tr>

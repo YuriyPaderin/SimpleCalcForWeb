@@ -10,5 +10,6 @@ namespace SimpleCalcForWeb.Models
         public string Expression { get; set; }
         public string ExpressionFilter { get; set; }
         public string HostFilter { get; set; }
+        public string TypeButton { get; set; }
     }
 }

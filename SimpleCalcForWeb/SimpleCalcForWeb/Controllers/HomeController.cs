@@ -18,7 +18,7 @@ namespace SimpleCalcForWeb.Controllers
         [HttpGet]
         public IActionResult Index(FormData data)
         {
-            if (string.IsNullOrEmpty(data.Expression) == false)
+            if (string.IsNullOrEmpty(data.Expression) == false && data.TypeButton == "Расчет")
             {
                 var note = new Note();
                 note.Expression = data.Expression;
