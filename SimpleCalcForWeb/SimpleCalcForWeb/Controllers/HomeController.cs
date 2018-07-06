@@ -16,12 +16,10 @@ namespace SimpleCalcForWeb.Controllers
             _db = context;
         }
 
-        public object SqlMethods { get; private set; }
-
         [HttpGet]
         public IActionResult Index(FormData data)
         {
-            if (string.IsNullOrEmpty(data.Expression) == false && data.TypeButton == "Расчет")
+            if (string.IsNullOrEmpty(data.Expression) == false && data.TypeButton == "Расчитать")
             {
                 var note = new Note();
                 note.Expression = data.Expression;
@@ -37,26 +35,50 @@ namespace SimpleCalcForWeb.Controllers
                 else
                     ViewData["Result"] = "Ответ равен: " + note.Result.ToString();
 
-                note.Date = DateTime.Now;
-                note.Host = Request.Host.ToString();
+                note.DateAndTime = DateTime.Now;
+                note.HostName = Request.Host.ToString();
 
                 _db.Notes.Add(note);
                 _db.SaveChanges();
             }
 
-            var notes = _db.Notes.OrderByDescending(c => c.Date).AsQueryable();
+            var notes = _db.Notes.OrderByDescending(c => c.DateAndTime).AsQueryable();
 
             if (string.IsNullOrEmpty(data.ExpressionFilter) == false)
-                notes = from note in notes
-                    where EF.Functions.Like(note.Expression, "%" + data.ExpressionFilter + "%")
-                    select note;
+                notes = notes.Where(note => EF.Functions.Like(note.Expression, "%" + data.ExpressionFilter + "%"));
 
             if (string.IsNullOrEmpty(data.HostFilter) == false)
-                notes = from note in notes
-                    where EF.Functions.Like(note.Host, "%" + data.HostFilter + "%")
-                    select note;
+                notes = notes.Where(note => EF.Functions.Like(note.HostName, "%" + data.HostFilter + "%"));
 
-            ViewBag.History = notes.ToList();
+            var history = new List<History>();
+            foreach(var note in notes.ToList())
+            {
+                string message;
+                switch (note.ErrorCode)
+                {
+                    case 0:
+                        message = note.Result.ToString();
+                        break;
+                    case 1:
+                        message = "Вы ввели неизвестную операцию.";
+                        break;
+                    case 2:
+                        message = "Неверный формат строки.";
+                        break;
+                    case 3:
+                        message = "Неверное соотношение цифр и арифметических операций.";
+                        break;
+                    default:
+                        message = "Неизвестная ошибка.";
+                        break;
+                }
+
+                history.Add(new History(note.Expression, message, note.HostName));
+            }
+
+            ViewBag.History = history;
+            
+
             return View();
         }
     }
