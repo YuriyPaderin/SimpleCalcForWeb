@@ -11,6 +11,6 @@ namespace SimpleCalcForWeb.Models
         public double? Result { get; set; }
         public DateTime Date { get; set; }
         public string Host { get; set; }
-        public int CodeError { get; set; }
+        public int ErrorCode { get; set; }
     }
 }

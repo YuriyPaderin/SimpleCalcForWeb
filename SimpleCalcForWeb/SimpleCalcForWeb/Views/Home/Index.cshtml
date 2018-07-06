@@ -21,33 +21,29 @@
     <input type="submit" asp-for="TypeButton" value="Отфильтровать"/>
 </form>
 <table>
-    <tr><th width="500px">Выражение</th><th width="800px">Результат</th><th width="800px">Имя хоста</th></tr>
+    <tr><th width="40%">Выражение</th><th width="40%">Результат</th><th width="20%">Имя хоста</th></tr>
     @foreach(var note in ViewBag.History)
     {
         <tr>
             <td>@note.Expression</td>
-            <td>
-                @switch (note.CodeError)
-                {
-                    case 0:
-                        ViewData["Note"] = note.Result;
-                        break;
-                    case 1:
-                        ViewData["Note"] = "Вы ввели неизвестную операцию.";
-                        break;
-                    case 2:
-                        ViewData["Note"] = "Неверный формат строки.";
-                        break;
-                    case 3:
-                        ViewData["Note"] = "Неверное соотношение цифр и арифметических операций.";
-                        break;
-                    default:
-                        ViewData["Note"] = "Неизвестеная ошибка.";
-                        break;
-                }
-
-                @ViewData["Note"]
-            </td>
+            @switch(note.ErrorCode)
+            {
+                case 0:
+                    <td>@note.Result</td>
+                    break;
+                case 1:
+                    <td>Вы ввели неизвестную операцию.</td>
+                    break;
+                case 2:
+                    <td>Неверный формат строки.</td>
+                    break;
+                case 3:
+                    <td>Неверное соотношение цифр и арифметических операций.</td>
+                    break;
+                default:
+                    <td>Неизвестная ошибка</td>
+                    break;
+            }
             <td>@note.Host</td>
         </tr>
     }

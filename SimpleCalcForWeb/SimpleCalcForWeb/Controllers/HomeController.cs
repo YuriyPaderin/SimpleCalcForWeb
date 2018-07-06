@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using SimpleCalcForWeb.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SimpleCalcForWeb.Controllers
 {
@@ -15,6 +16,8 @@ namespace SimpleCalcForWeb.Controllers
             _db = context;
         }
 
+        public object SqlMethods { get; private set; }
+
         [HttpGet]
         public IActionResult Index(FormData data)
         {
@@ -24,10 +27,10 @@ namespace SimpleCalcForWeb.Controllers
                 note.Expression = data.Expression;
                 note.Id = Guid.NewGuid();
 
-                int codeError;
+                int errorCode;
                 var calc = new Calculator();
-                note.Result = calc.Evaluate(note.Expression, out codeError);
-                note.CodeError = codeError;
+                note.Result = calc.Evaluate(note.Expression, out errorCode);
+                note.ErrorCode = errorCode;
 
                 if (note.Result == null)
                     ViewData["Result"] = "Неудалось подсчтитать ответ.";
@@ -44,10 +47,14 @@ namespace SimpleCalcForWeb.Controllers
             var notes = _db.Notes.OrderByDescending(c => c.Date).AsQueryable();
 
             if (string.IsNullOrEmpty(data.ExpressionFilter) == false)
-                notes = notes.Where(c => c.Expression.Contains(data.ExpressionFilter));
+                notes = from note in notes
+                    where EF.Functions.Like(note.Expression, "%" + data.ExpressionFilter + "%")
+                    select note;
 
             if (string.IsNullOrEmpty(data.HostFilter) == false)
-                notes = notes.Where(c => c.Host.Contains(data.HostFilter));
+                notes = from note in notes
+                    where EF.Functions.Like(note.Host, "%" + data.HostFilter + "%")
+                    select note;
 
             ViewBag.History = notes.ToList();
             return View();

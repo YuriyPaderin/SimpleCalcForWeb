@@ -8,14 +8,14 @@ namespace SimpleCalcForWeb
     {
         private List<ParsingItem> _correctItemCollect = new List<ParsingItem>();
 
-        public double? Evaluate(string src, out int codeError)
+        public double? Evaluate(string src, out int errorCode)
         {
-            codeError = Parse(src);
-            if (codeError == 0)
+            errorCode = Parse(src);
+            if (errorCode == 0)
             {
                 var result = Calculate();
                 if (result == null)
-                    codeError = 4;
+                    errorCode = 4;
 
                 return result;
             }
