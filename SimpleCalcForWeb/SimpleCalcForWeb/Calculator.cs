@@ -6,7 +6,7 @@ namespace SimpleCalcForWeb
 {
     public class Calculator
     {
-        private List<ParsingItem> _correctItemCollect = new List<ParsingItem>();
+        private List<ParsingItem> _correctItemList = new List<ParsingItem>();
 
         public double? Evaluate(string src, out int errorCode)
         {
@@ -88,11 +88,11 @@ namespace SimpleCalcForWeb
 
                 if (correctItem.Number != null && correctItem.Operation != null)
                 {
-                    _correctItemCollect.Add(correctItem);
+                    _correctItemList.Add(correctItem);
                     correctItem = new ParsingItem();
                 }
             }
-            _correctItemCollect.Add(correctItem);
+            _correctItemList.Add(correctItem);
             if (correctItem.Number != null && correctItem.Operation != null)
                 return 3;
             return 0;
@@ -100,20 +100,20 @@ namespace SimpleCalcForWeb
 
         private double? Calculate()
         {
-            while (_correctItemCollect.Count > 1)
+            while (_correctItemList.Count > 1)
             {
-                var maxRange = _correctItemCollect.Max(C => C.Range);
-                for (var i = 0; i < _correctItemCollect.Count - 1; i++)
+                var maxRange = _correctItemList.Max(C => C.Range);
+                for (var i = 0; i < _correctItemList.Count - 1; i++)
                 {
-                    if (maxRange == _correctItemCollect[i].Range)
+                    if (maxRange == _correctItemList[i].Range)
                     {
-                        _correctItemCollect[i + 1].Number = _correctItemCollect[i].Operation.Evaluate(_correctItemCollect[i].Number, _correctItemCollect[i + 1].Number);
-                        _correctItemCollect.RemoveAt(i);
+                        _correctItemList[i + 1].Number = _correctItemList[i].Operation.Evaluate(_correctItemList[i].Number, _correctItemList[i + 1].Number);
+                        _correctItemList.RemoveAt(i);
                         break;
                     }
                 }
             }
-            return _correctItemCollect[0].Number;
+            return _correctItemList[0].Number;
         }
     }
 }

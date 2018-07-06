@@ -50,8 +50,8 @@ namespace SimpleCalcForWeb.Controllers
             if (string.IsNullOrEmpty(data.HostFilter) == false)
                 notes = notes.Where(note => EF.Functions.Like(note.HostName, "%" + data.HostFilter + "%"));
 
-            var history = new List<History>();
-            foreach(var note in notes.ToList())
+            var historyList = new List<History>();
+            foreach(var note in notes)
             {
                 string message;
                 switch (note.ErrorCode)
@@ -73,12 +73,10 @@ namespace SimpleCalcForWeb.Controllers
                         break;
                 }
 
-                history.Add(new History(note.Expression, message, note.HostName));
+                historyList.Add(new History(note.Expression, message, note.HostName));
             }
 
-            ViewBag.History = history;
-            
-
+            ViewBag.History = historyList;   
             return View();
         }
     }
